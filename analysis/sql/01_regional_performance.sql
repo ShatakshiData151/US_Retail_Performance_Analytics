@@ -19,22 +19,32 @@ ORDER BY Total_Profit DESC;
 
 /*
 =================================================================
-Questionn 2:
-How many unique customers are in each segment
-(Consumer, corporate, Home-office)
-
-Business Objective:
-Identify the number of unique customers 
-across different market segment
+Questionn 10:
+Which states have a "Profit inversion" - meaning their 
+sales rank is significantly higher than their profit Rank 
 =================================================================
 */
+WITH state_performance AS (
+    SELECT 
+        State,
+        SUM(Sales) AS Total_Sales,
+        SUM(Profit) AS Total_Profit
+    FROM superstore.superstore_data
+    GROUP BY State
+)
 
-SELECT 
-Segment
-COUNT(DISTINCT(Customer_ID)) AS Unique_Customers
-FROM superstore.superstore_data
-GROUP BY Segment 
-ORDER BY Unique_Customers;
+SELECT
+    State,
+    Total_Sales,
+    Total_Profit,
+    RANK() OVER (
+        ORDER BY Total_Sales DESC
+    ) AS Sales_Rank,
+    RANK() OVER (
+        ORDER BY Total_Profit DESC
+    ) AS Profit_Rank
+FROM state_performance
+ORDER BY State;
 
 
 
